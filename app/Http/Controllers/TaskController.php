@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -10,7 +11,7 @@ class TaskController extends Controller
 {
     public function index()
     {
-        return Task::all();
+        return TaskResource::collection(Task::query()->orderBy('id', 'desc')->paginate(10));
     }
 
     public function store(Request $request)

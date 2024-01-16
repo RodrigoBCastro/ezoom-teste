@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
+    public function signup(Request $request)
     {
         $validatedData = $request->validate([
             'name' => 'required|max:255',
@@ -39,9 +39,19 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($request->only('email', 'password'))) {
-            return response()->json(['token' => $request->user()->createToken('API Token')->plainTextToken]);
+            return response()->json([
+                'user' => $request->user(),
+                'token' => $request->user()->createToken('API Token')->plainTextToken
+            ]);
         }
 
         return response()->json(['error' => 'Credenciais inválidas'], 401);
+    }
+
+    public function logout(Request $request)
+    {
+        $user = $request->user();
+        $user->currentAccessToken()->delete();
+        return response('', 204);
     }
 }
